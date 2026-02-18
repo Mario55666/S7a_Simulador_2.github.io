@@ -64,8 +64,7 @@ El usuario puede explorar los elementos visuales del flyer, comprender qué mens
 ## Créditos
 
 - **Docente:** Mg. Mario Quiroz  
-- **Curso:** Semiótica de la Imagen · 2026 · Semana 7  
-- **Universidad Tecnológica del Perú**  
+- **Curso:** Semiótica de la Imagen · 2026 · Semana 7   
 - Basado en la teoría de los tres cerebros de **Paul MacLean**.
 
 ## Licencia
