@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clínica Palmas · Teoría de los 3 cerebros</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 25px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #d4af37;
+      border-bottom: 1px solid #3e2e1f;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .subtitulo {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      font-size: 1.1rem;
+      color: #b0a090;
+      font-style: italic;
+    }
+    .contenedor-principal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+      justify-content: center;
+      align-items: stretch;
+      max-width: 1300px;
+      width: 100%;
+    }
+
+    /* Tarjeta del flyer */
+    .cerebro-card {
+      flex: 1 1 480px;
+      background: #2d241c;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 20px 30px -10px rgba(0,0,0,0.8), inset 0 0 0 1px #6b4f3a;
+      backdrop-filter: blur(2px);
+    }
+    .botones-capas {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .boton-capa {
+      flex: 1;
+      padding: 12px 5px;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .boton-capa.activo {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 rgba(0,0,0,0.4), 0 0 15px currentColor;
+    }
+    .boton-capa.inactivo {
+      opacity: 0.7;
+      filter: grayscale(0.4);
+    }
+    #btnReptiliano { background: #b34b3f; }
+    #btnLimbico    { background: #c49a2b; color: #1a1a1a; }
+    #btnNeocortex  { background: #3c6b7c; }
+
+    .flyer-wrapper {
+      background: #1e1611;
+      border-radius: 16px;
+      padding: 15px;
+      border: 2px solid #7a5e44;
+      box-shadow: inset 0 0 20px #0a0a0a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .flyer-capas {
+      position: relative;
+      width: 750px;
+      height: 750px;
+      max-width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #2b1f15;
+      background-image: repeating-linear-gradient(45deg, #3e2e1f 0px, #3e2e1f 10px, #4f3e2e 10px, #4f3e2e 20px);
+    }
+
+    /* Todas las imágenes se posicionan absolutas */
+    .flyer-capas img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+      pointer-events: none;
+    }
+
+    /* Fondo base - siempre debajo */
+    #imgFondo {
+      z-index: 1;
+    }
+
+    /* REPTILIANO - nivel 2 */
+    #imgReptiliano {
+      z-index: 2;
+    }
+
+    /* NEOCÓRTEX - nivel 3 (más alto para que el texto sea legible) */
+    #imgNeocortex {
+      z-index: 3;
+    }
+
+    /* Clases de control visual (no modifican z-index, solo apariencia) */
+    .capa-activa {
+      opacity: 1 !important;
+      filter: blur(0) !important;
+      pointer-events: auto !important;
+    }
+    .capa-desenfocada {
+      opacity: 0.4 !important;
+      filter: blur(3px) !important;
+      pointer-events: auto !important;
+    }
+    .capa-oculta {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .fondo-nitido { filter: blur(0); opacity: 1; }
+    .fondo-desenfocado { filter: blur(3px); opacity: 0.8; }
+
+    .leyenda-capas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: center;
+    }
+    .tag {
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: #2f2a24;
+      border-left: 4px solid;
+      color: #ddd;
+    }
+    .tag-rept { border-color: #b34b3f; }
+    .tag-limb { border-color: #c49a2b; }
+    .tag-neo  { border-color: #3c6b7c; }
+
+    /* Panel de información */
+    .info-card {
+      flex: 1 1 400px;
+      background: #2d241c;
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 20px 30px -10px black, inset 0 0 0 1px #6b4f3a;
+      display: flex;
+      flex-direction: column;
+    }
+    .titulo-cerebro {
+      font-size: 2rem;
+      font-weight: 300;
+      margin-bottom: 10px;
+      color: #d4af37;
+      border-bottom: 1px dashed #7a5e44;
+      padding-bottom: 10px;
+    }
+    .bloque-info {
+      margin: 12px 0;
+      background: #1f1a15;
+      padding: 14px 18px;
+      border-radius: 16px;
+      border-left: 6px solid;
+    }
+    .bloque-info p { margin: 6px 0; line-height: 1.5; }
+    .bloque-rept { border-color: #b34b3f; }
+    .bloque-limb { border-color: #c49a2b; }
+    .bloque-neo  { border-color: #3c6b7c; }
+    .etiqueta {
+      font-weight: 600;
+      color: #d4af37;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+    }
+    hr { border: none; height: 1px; background: #3e2e1f; margin: 15px 0; }
+
+    /* Cuestionario */
+    .quiz-section {
+      max-width: 900px;
+      width: 100%;
+      margin-top: 40px;
+      background: #2d241c;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 20px 30px -10px black, inset 0 0 0 1px #6b4f3a;
+    }
+    .quiz-section h2 {
+      color: #d4af37;
+      font-weight: 300;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 2rem;
+    }
+    .pregunta {
+      background: #1f1a15;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 8px solid;
+    }
+    .pregunta h3 {
+      margin-bottom: 15px;
+      color: #e0d3c0;
+      font-size: 1.3rem;
+    }
+    .opciones { display: flex; flex-direction: column; gap: 12px; }
+    .opcion {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #2b231d;
+      padding: 10px 18px;
+      border-radius: 50px;
+      border: 1px solid #4f3e2e;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .opcion:hover { background: #3f3228; border-color: #d4af37; }
+    .opcion input[type="radio"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #7a5e44;
+      border-radius: 50%;
+      background: #1a1a1a;
+      transition: 0.1s;
+      cursor: pointer;
+    }
+    .opcion input[type="radio"]:checked {
+      background: #d4af37;
+      border-color: #d4af37;
+      box-shadow: 0 0 8px gold;
+    }
+    .opcion label { flex: 1; font-size: 1rem; color: #ddd; cursor: pointer; }
+    .btn-comprobar {
+      background: #c49a2b;
+      border: none;
+      color: #1a1a1a;
+      font-weight: bold;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 15px;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 6px 0 #7a5e44;
+    }
+    .btn-comprobar:hover {
+      background: #dbb14b;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #7a5e44;
+    }
+    .resultado-quiz {
+      margin-top: 20px;
+      font-size: 1.3rem;
+      text-align: center;
+      background: #1f1a15;
+      padding: 15px;
+      border-radius: 60px;
+      color: #d4af37;
+      font-weight: bold;
+    }
+
+    /* Botones de control inferior */
+    .botones-inferiores {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0 20px;
+      flex-wrap: wrap;
+    }
+    .btn-secundario {
+      background: #4f3e2e;
+      color: #d4af37;
+      border: 2px solid #d4af37;
+      padding: 12px 25px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 0 #2b1f15;
+    }
+    .btn-secundario:hover {
+      background: #6b4f3a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #2b1f15;
+    }
+
+    /* Botón de email al docente */
+    .btn-email {
+      display: inline-block;
+      background: #b34b3f;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 12px 30px;
+      border-radius: 50px;
+      margin: 20px auto 10px;
+      border: 1px solid #d4af37;
+      box-shadow: 0 4px 0 #6d2e26;
+      transition: all 0.2s ease;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .btn-email:hover {
+      background: #c45f52;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #6d2e26;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 30px;
+      color: #b0a090;
+      font-size: 0.9rem;
+      text-align: center;
+      border-top: 1px solid #3e2e1f;
+      padding-top: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+    footer p {
+      margin: 5px 0;
+    }
+    .footer-docente {
+      color: #d4af37;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🏥 CLÍNICA PALMAS · TRES CEREBROS 🏥</h1>
+<div class="subtitulo">
+  🧠 Diagrama visual del cerebro con las tres capas diferenciadas por color: rojo=reptiliano, amarillo=límbico, azul=neocórtex.
+</div>
+
+<div class="contenedor-principal">
+  <!-- PANEL IZQUIERDO: FLYER INTERACTIVO -->
+  <div class="cerebro-card">
+    <div class="botones-capas">
+      <button id="btnReptiliano" class="boton-capa activo">🐊 REPTILIANO</button>
+      <button id="btnLimbico" class="boton-capa inactivo">🐴 LÍMBICO</button>
+      <button id="btnNeocortex" class="boton-capa inactivo">🧠 NEOCÓRTEX</button>
+    </div>
+
+    <div class="flyer-wrapper">
+      <div class="flyer-capas">
+        <!-- FONDO BASE: LIMBICO.png (siempre visible) -->
+        <img id="imgFondo"
+             class="fondo-base fondo-desenfocado"
+             src="LIMBICO.png"
+             alt="Ambiente médico con colores suaves"
+             title="Fondo Límbico: calma y confianza">
+
+        <!-- REPTILIANO (símbolos de alerta/supervivencia) -->
+        <img id="imgReptiliano"
+             class="capa-imagen capa-activa"
+             src="REPTILIANO.png"
+             alt="Símbolos de salud: cruz, pulso, rojo"
+             title="Reptiliano: atención instintiva"
+             data-capa="reptiliano">
+
+        <!-- NEOCÓRTEX (información racional: dirección, teléfono, email) -->
+        <img id="imgNeocortex"
+             class="capa-imagen capa-oculta"
+             src="NEOCORTEX.png"
+             alt="Datos de contacto y ubicación"
+             title="Neocórtex: lógica y planificación"
+             data-capa="neocortex">
+      </div>
+    </div>
+
+    <div class="leyenda-capas">
+      <span class="tag tag-rept">🐊 Reptiliano: cruz, pulso, rojo</span>
+      <span class="tag tag-limb">🐴 Límbico: fondo cálido, slogan emocional</span>
+      <span class="tag tag-neo">🧠 Neocórtex: dirección, teléfono, email</span>
+    </div>
+  </div>
+
+  <!-- PANEL DERECHO: INFORMACIÓN SEGÚN CEREBRO ACTIVO -->
+  <div class="info-card">
+    <div class="titulo-cerebro" id="tituloCerebro">🐊 REPTILIANO · SUPERVIVENCIA</div>
+    <div class="bloque-info bloque-rept" id="elementoFlyer">
+      <span class="etiqueta">✧ ELEMENTO EN EL FLYER ✧</span>
+      <p id="elemTexto">Cruz médica, gráfico de pulso, color rojo</p>
+    </div>
+    <div class="bloque-info bloque-rept" id="mensajeSub">
+      <span class="etiqueta">🗣️ MENSAJE SUBCONSCIENTE</span>
+      <p id="mensajeTexto"><i>“Atención inmediata, seguridad ante la enfermedad.”</i></p>
+    </div>
+    <hr>
+    <div class="bloque-info bloque-rept" id="descripcion">
+      <span class="etiqueta">🧠 PSICOLOGÍA</span>
+      <p>Activa el instinto de supervivencia mediante símbolos de salud (cruz, pulso) y el color rojo de alerta. Responde a la pregunta “¿Es seguro?”.</p>
+    </div>
+    <div class="bloque-info bloque-rept" id="pregunta">
+      <span class="etiqueta">❓ PREGUNTA QUE RESPONDE</span>
+      <p>«¿Es seguro? ¿Puedo confiar en que me salvarán?»</p>
+    </div>
+    <div class="bloque-info bloque-rept" id="aplicacion">
+      <span class="etiqueta">💼 APLICACIÓN EN CLÍNICA</span>
+      <p>Uso de rojo en títulos, iconos médicos universales, sensación de urgencia controlada.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BOTONES DE CONTROL INFERIOR -->
+<div class="botones-inferiores">
+  <button class="btn-secundario" id="btnVistaCompleta">🔆 VISTA COMPLETA NÍTIDA</button>
+  <button class="btn-secundario" id="btnResetDesenfoque">🔄 RESTABLECER DESENFOQUE</button>
+</div>
+
+<!-- CUESTIONARIO -->
+<section class="quiz-section">
+  <h2>🔍 CUESTIONARIO 3 CEREBROS · CLÍNICA PALMAS</h2>
+
+  <div class="pregunta" style="border-left-color:#b34b3f;">
+    <h3>1. ¿Qué elemento del flyer activa el cerebro reptiliano (supervivencia)?</h3>
+    <div class="opciones">
+      <div class="opcion"><input type="radio" name="q1" value="reptil" id="q1a"><label for="q1a">🐊 La cruz médica y el color rojo</label></div>
+      <div class="opcion"><input type="radio" name="q1" value="limbico" id="q1b"><label for="q1b">🐴 El slogan "Cuidado que nace del corazón"</label></div>
+      <div class="opcion"><input type="radio" name="q1" value="neo" id="q1c"><label for="q1c">🧠 La dirección y el teléfono</label></div>
+    </div>
+  </div>
+
+  <div class="pregunta" style="border-left-color:#c49a2b;">
+    <h3>2. El cerebro límbico (emociones) se asocia principalmente con:</h3>
+    <div class="opciones">
+      <div class="opcion"><input type="radio" name="q2" value="reptil" id="q2a"><label for="q2a">🐊 Los íconos de emergencia</label></div>
+      <div class="opcion"><input type="radio" name="q2" value="limbico" id="q2b"><label for="q2b">🐴 El fondo de color azul claro y el mensaje de confianza</label></div>
+      <div class="opcion"><input type="radio" name="q2" value="neo" id="q2c"><label for="q2c">🧠 El correo electrónico</label></div>
+    </div>
+  </div>
+
+  <div class="pregunta" style="border-left-color:#3c6b7c;">
+    <h3>3. ¿Qué información es procesada por el neocórtex (razón) para decidir ir a la clínica?</h3>
+    <div class="opciones">
+      <div class="opcion"><input type="radio" name="q3" value="reptil" id="q3a"><label for="q3a">🐊 El color rojo del título</label></div>
+      <div class="opcion"><input type="radio" name="q3" value="limbico" id="q3b"><label for="q3b">🐴 La imagen del médico sonriendo</label></div>
+      <div class="opcion"><input type="radio" name="q3" value="neo" id="q3c"><label for="q3c">🧠 La dirección y el teléfono</label></div>
+    </div>
+  </div>
+
+  <div class="pregunta" style="border-left-color:#b34b3f;">
+    <h3>4. El mensaje subconsciente “Atención inmediata, seguridad” corresponde al:</h3>
+    <div class="opciones">
+      <div class="opcion"><input type="radio" name="q4" value="reptil" id="q4a"><label for="q4a">🐊 Cerebro reptiliano</label></div>
+      <div class="opcion"><input type="radio" name="q4" value="limbico" id="q4b"><label for="q4b">🐴 Cerebro límbico</label></div>
+      <div class="opcion"><input type="radio" name="q4" value="neo" id="q4c"><label for="q4c">🧠 Cerebro neocórtex</label></div>
+    </div>
+  </div>
+
+  <button class="btn-comprobar" id="comprobarQuiz">COMPROBAR RESPUESTAS</button>
+  <div class="resultado-quiz" id="resultadoQuiz">—</div>
+
+  <!-- Botón para enviar mensaje al docente -->
+  <div style="text-align: center; margin-top: 30px;">
+    <a href="mailto:c12139@utp.edu.pe?subject=Consulta%20sobre%20Semiótica%20de%20la%20Imagen" class="btn-email">✉️ Enviar mensaje al docente</a>
+  </div>
+</section>
+
+<!-- FOOTER ACTUALIZADO CON DOCENTE Y CURSO -->
+<footer>
+  <p class="footer-docente">Docente: Mg Mario Quiroz | Curso: Semiótica de la Imagen · 2026 · Semana 7</p>
+  <p>🏥 Clínica Palmas · Basado en la teoría de los tres cerebros de Paul MacLean</p>
+</footer>
+
+<script>
+  (function() {
+    // Datos de cada cerebro para clínica médica
+    const datosClinica = {
+      reptiliano: {
+        titulo: "🐊 REPTILIANO · SUPERVIVENCIA E INSTINTO",
+        elemento: "Cruz médica, gráfico de pulso, color rojo",
+        mensaje: "“Atención inmediata, seguridad ante la enfermedad.”",
+        psicologia: "Activa el instinto de supervivencia mediante símbolos de salud (cruz, pulso) y el color rojo de alerta. Responde a la pregunta “¿Es seguro?”.",
+        pregunta: "«¿Es seguro? ¿Puedo confiar en que me salvarán?»",
+        aplicacion: "Uso de rojo en títulos, iconos médicos universales, sensación de urgencia controlada."
+      },
+      limbico: {
+        titulo: "🐴 LÍMBICO · EMOCIÓN Y CONFIANZA",
+        elemento: "Fondo cálido, slogan 'Cuidado que nace del corazón'",
+        mensaje: "“Aquí te sentirás querido y protegido.”",
+        psicologia: "El fondo azul claro y el mensaje afectivo generan calma, confianza y vínculo emocional con el paciente.",
+        pregunta: "«¿Me gusta? ¿Me hace sentir bien?»",
+        aplicacion: "Colores suaves, frases empáticas, imagen del médico que transmite cercanía."
+      },
+      neocortex: {
+        titulo: "🧠 NEOCÓRTEX · LÓGICA Y RAZÓN",
+        elemento: "Dirección, teléfono, correo electrónico",
+        mensaje: "“Es una clínica real, localizable y con canales de contacto.”",
+        psicologia: "Procesa datos objetivos: ubicación, teléfono, email. Permite planificar la visita y verificar la existencia del servicio.",
+        pregunta: "«¿Cómo llego? ¿Tienen experiencia? ¿Cómo contacto?»",
+        aplicacion: "Información clara de contacto, dirección detallada, correo y teléfono visibles."
+      }
+    };
+
+    // Elementos del DOM
+    const imgFondo = document.getElementById('imgFondo');
+    const imgRept  = document.getElementById('imgReptiliano');
+    const imgNeo   = document.getElementById('imgNeocortex');
+
+    const btnR = document.getElementById('btnReptiliano');
+    const btnL = document.getElementById('btnLimbico');
+    const btnN = document.getElementById('btnNeocortex');
+    const btnVistaCompleta = document.getElementById('btnVistaCompleta');
+    const btnReset = document.getElementById('btnResetDesenfoque');
+
+    const tituloEl = document.getElementById('tituloCerebro');
+    const elemTexto = document.getElementById('elemTexto');
+    const mensajeTexto = document.getElementById('mensajeTexto');
+    const descripcionP = document.querySelector('#descripcion p');
+    const preguntaP = document.querySelector('#pregunta p');
+    const aplicacionP = document.querySelector('#aplicacion p');
+    const bloques = [
+      document.getElementById('elementoFlyer'),
+      document.getElementById('mensajeSub'),
+      document.getElementById('descripcion'),
+      document.getElementById('pregunta'),
+      document.getElementById('aplicacion')
+    ];
+
+    // Función para aplicar estado visual según el cerebro activo
+    function aplicarEstadoVisual(tipo) {
+      // Quitar clases específicas de las capas (excepto fondo)
+      [imgRept, imgNeo].forEach(img => {
+        img.classList.remove('capa-activa', 'capa-desenfocada', 'capa-oculta');
+      });
+
+      if (tipo === 'reptiliano') {
+        imgRept.classList.add('capa-activa');
+        imgNeo.classList.add('capa-oculta');
+        imgFondo.classList.remove('fondo-nitido');
+        imgFondo.classList.add('fondo-desenfocado');
+      } 
+      else if (tipo === 'limbico') {
+        imgRept.classList.add('capa-desenfocada');
+        imgNeo.classList.add('capa-oculta');
+        imgFondo.classList.remove('fondo-desenfocado');
+        imgFondo.classList.add('fondo-nitido');
+      } 
+      else if (tipo === 'neocortex') {
+        imgNeo.classList.add('capa-activa');
+        imgRept.classList.add('capa-desenfocada');
+        imgFondo.classList.remove('fondo-nitido');
+        imgFondo.classList.add('fondo-desenfocado');
+      }
+    }
+
+    // Actualiza panel de información y botones
+    function activarCerebro(tipo) {
+      const d = datosClinica[tipo];
+      tituloEl.textContent = d.titulo;
+      elemTexto.textContent = d.elemento;
+      mensajeTexto.innerHTML = `<i>${d.mensaje}</i>`;
+      descripcionP.textContent = d.psicologia;
+      preguntaP.textContent = d.pregunta;
+      aplicacionP.textContent = d.aplicacion;
+
+      bloques.forEach(b => {
+        b.classList.remove('bloque-rept', 'bloque-limb', 'bloque-neo');
+        if (tipo === 'reptiliano') b.classList.add('bloque-rept');
+        if (tipo === 'limbico')    b.classList.add('bloque-limb');
+        if (tipo === 'neocortex')  b.classList.add('bloque-neo');
+      });
+
+      [btnR, btnL, btnN].forEach(b => {
+        b.classList.remove('activo');
+        b.classList.add('inactivo');
+      });
+      if (tipo === 'reptiliano') { btnR.classList.add('activo'); btnR.classList.remove('inactivo'); }
+      if (tipo === 'limbico')    { btnL.classList.add('activo'); btnL.classList.remove('inactivo'); }
+      if (tipo === 'neocortex')  { btnN.classList.add('activo'); btnN.classList.remove('inactivo'); }
+
+      aplicarEstadoVisual(tipo);
+    }
+
+    // Vista completa: todas las capas nítidas, fondo nítido
+    function vistaCompleta() {
+      [imgRept, imgNeo].forEach(img => {
+        img.classList.remove('capa-oculta', 'capa-desenfocada');
+        img.classList.add('capa-activa');
+      });
+      imgFondo.classList.remove('fondo-desenfocado');
+      imgFondo.classList.add('fondo-nitido');
+
+      // Desmarcar botones de cerebro
+      [btnR, btnL, btnN].forEach(b => {
+        b.classList.remove('activo');
+        b.classList.add('inactivo');
+      });
+    }
+
+    // Restablecer al último cerebro activo (guardamos el estado)
+    let cerebroActual = 'reptiliano';
+    function restablecerDesenfoque() {
+      activarCerebro(cerebroActual);
+    }
+
+    // Sobrescribir activarCerebro para que guarde el estado
+    const originalActivar = activarCerebro;
+    activarCerebro = function(tipo) {
+      cerebroActual = tipo;
+      originalActivar(tipo);
+    };
+
+    // Eventos de botones principales
+    btnR.addEventListener('click', () => activarCerebro('reptiliano'));
+    btnL.addEventListener('click', () => activarCerebro('limbico'));
+    btnN.addEventListener('click', () => activarCerebro('neocortex'));
+
+    // Eventos de clic en imágenes
+    [imgRept, imgNeo].forEach(img => {
+      img.addEventListener('click', e => {
+        const capa = e.currentTarget.getAttribute('data-capa');
+        activarCerebro(capa);
+      });
+    });
+
+    // Botones inferiores
+    btnVistaCompleta.addEventListener('click', vistaCompleta);
+    btnReset.addEventListener('click', () => restablecerDesenfoque());
+
+    // Inicializar con reptiliano
+    activarCerebro('reptiliano');
+
+    // Cuestionario
+    const btnComprobar = document.getElementById('comprobarQuiz');
+    const resultadoDiv = document.getElementById('resultadoQuiz');
+    const preguntas = [
+      { name: 'q1', correcta: 'reptil' },
+      { name: 'q2', correcta: 'limbico' },
+      { name: 'q3', correcta: 'neo' },
+      { name: 'q4', correcta: 'reptil' }
+    ];
+
+    btnComprobar.addEventListener('click', () => {
+      let aciertos = 0;
+      preguntas.forEach(p => {
+        const radios = document.getElementsByName(p.name);
+        for (const r of radios) {
+          if (r.checked && r.value === p.correcta) {
+            aciertos++;
+            break;
+          }
+        }
+      });
+      let msg = `🎯 Aciertos: ${aciertos} de ${preguntas.length}`;
+      if (aciertos === preguntas.length) msg += ' · ¡Perfecto, maestro de la semiótica!';
+      else if (aciertos >= 3) msg += ' · Muy bien, casi dominas los tres cerebros.';
+      else msg += ' · Vuelve a intentarlo, observa cada detalle.';
+      resultadoDiv.textContent = msg;
+    });
+  })();
+</script>
+
+<!-- Nota: Si las imágenes no existen, se verá un patrón de fondo de respaldo.
+     Se recomienda usar archivos PNG con transparencia para superponer correctamente. -->
+</body>
+</html>
