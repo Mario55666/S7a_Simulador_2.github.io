@@ -2,7 +2,7 @@
 
 ## Descripción del proyecto
 
-Este proyecto es una herramienta educativa interactiva desarrollada para la asignatura **Semiótica de la Imagen** de la Universidad Tecnológica del Perú. Su objetivo es demostrar cómo la **teoría de los tres cerebros** de Paul MacLean –reptiliano, límbico y neocórtex– se aplica en el diseño de una pieza gráfica real: un flyer promocional de la **Clínica Palmas**.
+Este proyecto es una herramienta educativa interactiva desarrollada para la asignatura "Semiótica de la Imagen". Su objetivo es demostrar cómo la **teoría de los tres cerebros** de Paul MacLean –reptiliano, límbico y neocórtex– se aplica en el diseño de una pieza gráfica real: un flyer promocional de la **Clínica Palmas**.
 
 El usuario puede explorar los elementos visuales del flyer, comprender qué mensajes subconscientes activa cada capa cerebral y poner a prueba sus conocimientos mediante un cuestionario. La interfaz combina una estética médica profesional (colores suaves, iconografía de salud) con una lógica de capas superpuestas que permite visualizar cómo cada cerebro procesa distintos estímulos.
 
