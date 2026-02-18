@@ -216,6 +216,53 @@
     }
     hr { border: none; height: 1px; background: #3e2e1f; margin: 15px 0; }
 
+    /* Formulario de datos del estudiante */
+    .form-estudiante {
+      background: #2b231d;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 25px;
+      border: 1px solid #7a5e44;
+    }
+    .form-estudiante h3 {
+      color: #d4af37;
+      margin-bottom: 15px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 1.2rem;
+    }
+    .campo-form {
+      margin-bottom: 15px;
+    }
+    .campo-form label {
+      display: block;
+      color: #b0a090;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .campo-form input {
+      width: 100%;
+      padding: 12px 15px;
+      background: #1f1a15;
+      border: 2px solid #4f3e2e;
+      border-radius: 50px;
+      color: #e0e0e0;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .campo-form input:focus {
+      outline: none;
+      border-color: #d4af37;
+      background: #2b231d;
+    }
+    .campo-form input::placeholder {
+      color: #6b5a4a;
+      font-style: italic;
+    }
+
     /* Cuestionario */
     .quiz-section {
       max-width: 900px;
@@ -379,7 +426,7 @@
 </head>
 <body>
 
-<h1>🏥 CLÍNICA PALMAS · TRES CEREBROS 🏥</h1>
+<h1>🏥 SEMANA 7 · CLÍNICA PALMAS · TRES CEREBROS 🏥</h1>
 <div class="subtitulo">
   🧠 Diagrama visual del cerebro con las tres capas diferenciadas por color: rojo=reptiliano, amarillo=límbico, azul=neocórtex.
 </div>
@@ -460,9 +507,22 @@
   <button class="btn-secundario" id="btnResetDesenfoque">🔄 RESTABLECER DESENFOQUE</button>
 </div>
 
-<!-- CUESTIONARIO -->
+<!-- CUESTIONARIO CON DATOS DEL ESTUDIANTE -->
 <section class="quiz-section">
   <h2>🔍 CUESTIONARIO 3 CEREBROS · CLÍNICA PALMAS</h2>
+
+  <!-- Campos de identificación del estudiante -->
+  <div class="form-estudiante">
+    <h3>📋 DATOS DEL ESTUDIANTE</h3>
+    <div class="campo-form">
+      <label for="nombre">Nombre y Apellido</label>
+      <input type="text" id="nombre" placeholder="Ej. Juan Pérez" value="">
+    </div>
+    <div class="campo-form">
+      <label for="correo">Correo Electrónico</label>
+      <input type="email" id="correo" placeholder="Ej. juan.perez@utp.edu.pe" value="">
+    </div>
+  </div>
 
   <div class="pregunta" style="border-left-color:#b34b3f;">
     <h3>1. ¿Qué elemento del flyer activa el cerebro reptiliano (supervivencia)?</h3>
@@ -503,9 +563,9 @@
   <button class="btn-comprobar" id="comprobarQuiz">COMPROBAR RESPUESTAS</button>
   <div class="resultado-quiz" id="resultadoQuiz">—</div>
 
-  <!-- Botón para enviar mensaje al docente -->
+  <!-- Botón para enviar mensaje al docente (con los datos del estudiante incluidos en el asunto/cuerpo) -->
   <div style="text-align: center; margin-top: 30px;">
-    <a href="mailto:c12139@utp.edu.pe?subject=Consulta%20sobre%20Semiótica%20de%20la%20Imagen" class="btn-email">✉️ Enviar mensaje al docente</a>
+    <a href="#" class="btn-email" id="btnEnviarDocente">✉️ Enviar resultados al docente</a>
   </div>
 </section>
 
@@ -674,7 +734,7 @@
     // Inicializar con reptiliano
     activarCerebro('reptiliano');
 
-    // Cuestionario
+    // Cuestionario y envío al docente
     const btnComprobar = document.getElementById('comprobarQuiz');
     const resultadoDiv = document.getElementById('resultadoQuiz');
     const preguntas = [
@@ -684,6 +744,7 @@
       { name: 'q4', correcta: 'reptil' }
     ];
 
+    let ultimoResultado = '—';
     btnComprobar.addEventListener('click', () => {
       let aciertos = 0;
       preguntas.forEach(p => {
@@ -700,6 +761,20 @@
       else if (aciertos >= 3) msg += ' · Muy bien, casi dominas los tres cerebros.';
       else msg += ' · Vuelve a intentarlo, observa cada detalle.';
       resultadoDiv.textContent = msg;
+      ultimoResultado = msg;
+    });
+
+    // Botón enviar al docente (actualiza el href del correo con los datos del estudiante)
+    const btnEnviar = document.getElementById('btnEnviarDocente');
+    btnEnviar.addEventListener('click', (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim() || 'Sin nombre';
+      const correo = document.getElementById('correo').value.trim() || 'Sin correo';
+      const asunto = encodeURIComponent('Resultados cuestionario 3 cerebros - Clínica Palmas');
+      const cuerpo = encodeURIComponent(
+        `Estudiante: ${nombre}\nCorreo: ${correo}\n\nResultado: ${ultimoResultado}\n\n(Adjuntar captura si es necesario)`
+      );
+      window.location.href = `mailto:c12139@utp.edu.pe?subject=${asunto}&body=${cuerpo}`;
     });
   })();
 </script>
